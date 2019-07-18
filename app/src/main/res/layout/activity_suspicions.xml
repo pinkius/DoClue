@@ -13,5 +13,5 @@
             android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent" android:id="@+id/textViewSuspicionsTitle"
-            android:textSize="36sp"/>
+            android:textSize="36sp" android:onClick="doSomething"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

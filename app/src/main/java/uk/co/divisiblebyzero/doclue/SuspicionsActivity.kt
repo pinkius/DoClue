@@ -1,9 +1,12 @@
 package uk.co.divisiblebyzero.doclue
 
+import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 
@@ -35,6 +38,9 @@ class SuspicionsActivity : AppCompatActivity() {
         newTextView.text = text
         newTextView.textSize = size
         newTextView.id = View.generateViewId()
+
+        newTextView.setOnClickListener { v -> if (v is TextView) v.paintFlags = (v.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG)}
+
         layout.addView(newTextView)
         set.clone(layout)
         set.connect(newTextView.id, ConstraintSet.TOP, aboveTextView.id, ConstraintSet.BOTTOM, 32)
@@ -50,6 +56,7 @@ class SuspicionsActivity : AppCompatActivity() {
         }
         return currentLast
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_suspicions)
@@ -60,6 +67,10 @@ class SuspicionsActivity : AppCompatActivity() {
 
         lastTextView = addTextGroup(layout, lastTextView, "People", people)
         lastTextView = addTextGroup(layout, lastTextView, "Weapons", weapons)
-        lastTextView = addTextGroup(layout, lastTextView, "Locations", locations)
+        //lastTextView = addTextGroup(layout, lastTextView, "Locations", locations)
+    }
+
+    fun doSomething(view: View) {
+        Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
     }
 }
