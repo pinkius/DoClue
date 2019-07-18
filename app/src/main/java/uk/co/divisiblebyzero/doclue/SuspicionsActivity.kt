@@ -67,7 +67,7 @@ class SuspicionsActivity : AppCompatActivity() {
 
         lastTextView = addTextGroup(layout, lastTextView, "People", people)
         lastTextView = addTextGroup(layout, lastTextView, "Weapons", weapons)
-        //lastTextView = addTextGroup(layout, lastTextView, "Locations", locations)
+        lastTextView = addTextGroup(layout, lastTextView, "Locations", locations)
     }
 
     fun doSomething(view: View) {
