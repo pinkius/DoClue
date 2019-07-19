@@ -10,6 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import android.content.Intent
+
+
 
 class SuspicionsActivity : AppCompatActivity() {
     val TAG = "SuspicionsActivity"
@@ -87,13 +90,15 @@ class SuspicionsActivity : AppCompatActivity() {
             var rightAnchor: View = layout
             for (i: Int in 1..5) {
                 val newCheckBox = CheckBox(this)
-                //newCheckBox.isChecked = false
+                if (text in suspicionsMap)
+                    newCheckBox.isChecked = ((suspicionsMap[text]!!.state shr i) and 1 == 1)
                 newCheckBox.text = ""
                 newCheckBox.id = View.generateViewId()
                 newCheckBox.setOnClickListener { v ->
                     if (v is CheckBox) {
                         if (text in suspicionsMap) {
                             suspicionsMap[text]!!.state = suspicionsMap[text]!!.state xor (1 shl i)
+                            persistState(text)
                         }
                         //Toast.makeText(this, "Clicked: ${i} ${text}: ${suspicionsMap[text]}", Toast.LENGTH_SHORT).show()
                     }
@@ -136,7 +141,13 @@ class SuspicionsActivity : AppCompatActivity() {
         lastTextView = addTextGroup(layout, lastTextView, "Locations", locations)
     }
 
-    fun doSomething(view: View) {
-        Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
+    fun reset(view: View) {
+        for (item in suspicionsMap.keys) {
+            suspicionsMap[item]!!.state = 0
+            persistState(item)
+        }
+        finish()
+
+        startActivity(Intent(this, SuspicionsActivity::class.java))
     }
 }

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">DoClue</string>
     <string name="suspicions_title">Suspicions</string>
+    <string name="suspicions_reset_button">Reset</string>
 </resources>
