@@ -1,5 +1,6 @@
 package uk.co.divisiblebyzero.doclue
 
+import android.content.Context
 import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +30,19 @@ class SuspicionsActivity : AppCompatActivity() {
 
     val suspicionsMap: MutableMap<String, Suspicion> = mutableMapOf()
 
+    fun getPersistedState(item: String): Int {
+        val prefs = this.getPreferences(Context.MODE_PRIVATE) ?: return 0
+        return prefs.getInt(item, 0)
+    }
+
+    fun persistState(item: String) {
+        val prefs = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (prefs.edit()) {
+            putInt(item, suspicionsMap[item]!!.state)
+            commit()
+        }
+    }
+
     fun addNewTextViewUnderThisOne(
         layout: ConstraintLayout,
         aboveTextView: TextView,
@@ -37,16 +51,25 @@ class SuspicionsActivity : AppCompatActivity() {
         isHeader: Boolean = true
     ): TextView {
 
+
+        var state: Int = 0
+        if (text in suspicionsMap) {
+            state = suspicionsMap.get(text)!!.state
+        }
+
+
         val newTextView = TextView(this)
         newTextView.text = text
         newTextView.textSize = size
         newTextView.id = View.generateViewId()
+        if (state and 1 == 1) newTextView.paintFlags = newTextView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
         newTextView.setOnClickListener { v ->
             if (v is TextView) {
                 v.paintFlags = (v.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG)
-                if (v.text in suspicionsMap) suspicionsMap[v.text]!!.state = suspicionsMap[v.text]!!.state xor 1
-                Toast.makeText(this, suspicionsMap[v.text].toString(), Toast.LENGTH_SHORT).show()
+                if (text in suspicionsMap) suspicionsMap[text]!!.state = suspicionsMap[text]!!.state xor 1
+                persistState(text)
+                //Toast.makeText(this, suspicionsMap[text].toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -72,7 +95,7 @@ class SuspicionsActivity : AppCompatActivity() {
                         if (text in suspicionsMap) {
                             suspicionsMap[text]!!.state = suspicionsMap[text]!!.state xor (1 shl i)
                         }
-                        Toast.makeText(this, "Clicked: ${i} ${text}: ${suspicionsMap[text]}", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this, "Clicked: ${i} ${text}: ${suspicionsMap[text]}", Toast.LENGTH_SHORT).show()
                     }
                 }
                 layout.addView(newCheckBox)
@@ -94,8 +117,8 @@ class SuspicionsActivity : AppCompatActivity() {
     fun addTextGroup(layout: ConstraintLayout, lastTextView: TextView, title: String, items: Array<String>): TextView {
         var currentLast = addNewTextViewUnderThisOne(layout, lastTextView, title, 20f)
         for (item in items) {
+            suspicionsMap.put(item, Suspicion(item, getPersistedState(item)))
             currentLast = addNewTextViewUnderThisOne(layout, currentLast, item, 14f, false)
-            suspicionsMap.put(item, Suspicion(item))
         }
         return currentLast
     }
